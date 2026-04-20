@@ -26,6 +26,8 @@ public class booksharing {
     private LocalDate returnDate;
     private String status;
 
+    private boolean returned = false;
+
     // getters and setters
     public Long getId() {
         return id;

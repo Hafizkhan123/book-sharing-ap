@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Book — BookShare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <a href="index.html" class="back">← Back</a>
+        <h2>🔄 Share Book</h2>
+    </div>
+    <div class="card">
+        <div class="card-title">📤 Share Details</div>
+        <div class="two-col">
+            <div class="form-group">
+                <label>Book ID</label>
+                <input type="number" id="bookId" placeholder="e.g. 1">
+                <small>ID of the book to share</small>
+            </div>
+            <div class="form-group">
+                <label>Share With (User ID)</label>
+                <input type="number" id="toUserId" placeholder="e.g. 2">
+                <small>Recipient's user ID</small>
+            </div>
+        </div>
+        <button class="btn btn-warning" onclick="shareBook()">Share Book</button>
+        <div class="spinner" id="spinner"></div>
+        <div class="alert" id="alert"></div>
+    </div>
+    <div class="result-card" id="result-card" style="display:none">
+        <h3>✓ Book Shared Successfully</h3>
+        <table>
+            <tr><th>Share ID</th><td id="res-id">-</td></tr>
+            <tr><th>Book</th><td id="res-book">-</td></tr>
+            <tr><th>From</th><td id="res-from">-</td></tr>
+            <tr><th>To</th><td id="res-to">-</td></tr>
+            <tr><th>Share Date</th><td id="res-date">-</td></tr>
+            <tr><th>Status</th><td id="res-status">-</td></tr>
+        </table>
+    </div>
+    <div class="card">
+        <div class="card-title">🔍 Check Borrowed Books by User</div>
+        <div class="form-group">
+            <label>User ID</label>
+            <input type="number" id="checkUserId" placeholder="e.g. 2">
+        </div>
+        <button class="btn btn-primary" onclick="loadBorrowedByUser()">Check</button>
+        <div class="table-wrapper" style="margin-top:16px;">
+            <table>
+                <thead>
+                    <tr><th>Share ID</th><th>Book</th><th>From</th><th>Date</th><th>Status</th></tr>
+                </thead>
+                <tbody id="borrowed-tbody">
+                    <tr class="empty-row"><td colspan="5">Enter a user ID above</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="js/auth-guard.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — BookShare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <a href="index.html" class="back">← Back</a>
+        <h2>👤 Register User</h2>
+    </div>
+    <div class="card">
+        <div class="card-title">📝 Create New Account</div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="e.g. Monkey D. Luffy">
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="e.g. luffy@strawhat.com">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter a secure password">
+        </div>
+        <button class="btn btn-primary" onclick="registerUser()">Create Account</button>
+        <div class="spinner" id="spinner"></div>
+        <div class="alert" id="alert"></div>
+    </div>
+    <div class="result-card" id="result-card" style="display:none">
+        <h3>✓ Registered Successfully</h3>
+        <p style="color:#8892a4;margin-bottom:14px;font-size:0.87rem;">
+            Account created! <a href="login.html" style="color:#4f8ef7;">Login here →</a>
+        </p>
+        <table>
+            <tr><th>ID</th><td id="res-id">-</td></tr>
+            <tr><th>Name</th><td id="res-name">-</td></tr>
+            <tr><th>Email</th><td id="res-email">-</td></tr>
+        </table>
+    </div>
+</div>
+<!-- No auth-guard: register page is public -->
+<script src="js/app.js"></script>
+</body>
+</html>

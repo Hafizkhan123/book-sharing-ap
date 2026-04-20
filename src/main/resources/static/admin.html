@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — BookShare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0f1117;
+            --bg2:     #161b27;
+            --bg3:     #1e2535;
+            --border:  #2a3045;
+            --accent:  #4f8ef7;
+            --accent2: #7c5cfc;
+            --green:   #22c55e;
+            --red:     #ef4444;
+            --yellow:  #f59e0b;
+            --purple:  #a855f7;
+            --text:    #e8ecf4;
+            --text2:   #8892a4;
+            --text3:   #4a5568;
+            --font-head: 'Syne', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-top: 56px;
+        }
+
+        /* ── Top Navbar ── */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: var(--bg2);
+            border-bottom: 1px solid var(--border);
+            padding: 0 28px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 999;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            font-family: var(--font-head);
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #4f8ef7, #7c5cfc);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-user {
+            color: var(--text2);
+            font-size: 0.82rem;
+        }
+
+        .navbar-user strong { color: var(--text); }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-link {
+            color: var(--text2);
+            text-decoration: none;
+            font-size: 0.82rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover { background: var(--bg3); color: var(--text); }
+
+        .btn-logout {
+            padding: 5px 14px;
+            background: rgba(239,68,68,0.12);
+            color: #f87171;
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover { background: rgba(239,68,68,0.22); }
+
+        /* ── Page Layout ── */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* ── Page Title ── */
+        .page-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .page-title h1 {
+            font-family: var(--font-head);
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, #e8ecf4, #4f8ef7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p { color: var(--text2); font-size: 0.85rem; margin-top: 4px; }
+
+        .refresh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text2);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover { color: var(--text); border-color: var(--accent); }
+
+        /* ── Stats Grid ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .stat-card.blue::before   { background: linear-gradient(90deg, #4f8ef7, #7c5cfc); }
+        .stat-card.green::before  { background: linear-gradient(90deg, #22c55e, #16a34a); }
+        .stat-card.yellow::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .stat-card.purple::before { background: linear-gradient(90deg, #a855f7, #7c5cfc); }
+
+        .stat-icon {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.76rem;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .stat-value.blue   { color: #7eb3ff; }
+        .stat-value.green  { color: #4ade80; }
+        .stat-value.yellow { color: #fbbf24; }
+        .stat-value.purple { color: #c084fc; }
+
+        /* ── Section ── */
+        .section {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg3);
+        }
+
+        .section-title {
+            font-family: var(--font-head);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .count-badge {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            color: var(--text2);
+            font-family: var(--font-body);
+        }
+
+        /* ── Table ── */
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+        }
+
+        table th {
+            padding: 11px 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            white-space: nowrap;
+            background: var(--bg3);
+        }
+
+        table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(42,48,69,0.5);
+            color: var(--text);
+            vertical-align: middle;
+        }
+
+        table tr:last-child td { border-bottom: none; }
+        table tbody tr:hover td { background: rgba(79,142,247,0.04); }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--text3);
+            padding: 32px;
+            font-style: italic;
+        }
+
+        /* ── Badges ── */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .badge::before { content: '●'; font-size: 0.42rem; }
+
+        .badge-shared   { background: rgba(79,142,247,0.15); color: #7eb3ff; border: 1px solid rgba(79,142,247,0.25); }
+        .badge-returned { background: rgba(34,197,94,0.12);  color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+
+        /* ── Spinner ── */
+        .spinner {
+            display: inline-block;
+            width: 18px; height: 18px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Loading overlay ── */
+        .loading-row td {
+            text-align: center;
+            padding: 28px;
+            color: var(--text3);
+        }
+
+        /* ── Error banner ── */
+        .error-banner {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #f87171;
+            padding: 14px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            display: none;
+        }
+
+        .error-banner.show { display: block; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-links  { display: none; }
+            .page       { padding: 20px 16px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-value { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+    <div class="navbar-brand">
+        📚 BookShare
+        <span class="admin-badge">Admin</span>
+    </div>
+    
+    <div class="navbar-right">
+        <span class="navbar-user">Logged in as <strong id="loggedInEmail">...</strong></span>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<!-- ── Main Page ── -->
+<div class="page">
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <div>
+            <h1>⚙️ Admin Dashboard</h1>
+            <p>System overview — all users, books and sharing activity</p>
+        </div>
+        <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
+    </div>
+
+    <!-- Error Banner -->
+    <div class="error-banner" id="errorBanner"></div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <span class="stat-icon">👥</span>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value blue" id="usersCount">
+                <span class="spinner"></span>
+            </div>
+        </div>
+        <div class="stat-card green">
+            <span class="stat-icon">📚</span>
+            <div class="stat-label">Total Books</div>
+            <div class="stat-value green" id="booksCount">
+                <span class="spinner"></span>
+            </div>
+        </div>
+        <div class="stat-card yellow">
+            <span class="stat-icon">🔄</span>
+            <div class="stat-label">Total Shares</div>
+            <div class="stat-value yellow" id="sharesCount">
+                <span class="spinner"></span>
+            </div>
+        </div>
+        <div class="stat-card purple">
+            <span class="stat-icon">📖</span>
+            <div class="stat-label">Active Borrows</div>
+            <div class="stat-value purple" id="activeCount">
+                <span class="spinner"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">
+                👥 All Users
+                <span class="count-badge" id="users-count-badge">loading...</span>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr class="loading-row">
+                        <td colspan="3"><span class="spinner"></span> Loading users...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Books Table -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">
+                📚 All Books
+                <span class="count-badge" id="books-count-badge">loading...</span>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody id="booksTableBody">
+                    <tr class="loading-row">
+                        <td colspan="4"><span class="spinner"></span> Loading books...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sharing Records Table -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">
+                🔄 All Sharing Records
+                <span class="count-badge" id="shares-count-badge">loading...</span>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Book</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Share Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="sharesTableBody">
+                    <tr class="loading-row">
+                        <td colspan="7"><span class="spinner"></span> Loading records...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ── Status badge helper ────────────────────────────
+    function statusBadge(s) {
+        if (s === 'SHARED')   return '<span class="badge badge-shared">SHARED</span>';
+        if (s === 'RETURNED') return '<span class="badge badge-returned">RETURNED</span>';
+        return `<span class="badge">${s}</span>`;
+    }
+
+    // ── Show error ─────────────────────────────────────
+    function showError(msg) {
+        const el = document.getElementById('errorBanner');
+        el.textContent = '⚠ ' + msg;
+        el.className = 'error-banner show';
+    }
+
+    // ── Logout ─────────────────────────────────────────
+    async function logout() {
+        try { await fetch('/auth/logout', { method: 'POST', credentials: 'include' }); } catch (e) {}
+        window.location.href = '/login.html';
+    }
+
+    // ── Load everything ────────────────────────────────
+    async function loadDashboard() {
+
+        // Reset stat cards to spinner
+        ['usersCount','booksCount','sharesCount','activeCount'].forEach(id => {
+            document.getElementById(id).innerHTML = '<span class="spinner"></span>';
+        });
+
+        // 1. Check login
+        try {
+            const statusRes  = await fetch('/auth/status', { credentials: 'include' });
+            const statusData = await statusRes.json();
+
+            if (!statusData.loggedIn) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            document.getElementById('loggedInEmail').textContent = statusData.email || 'Admin';
+
+        } catch (e) {
+            window.location.href = '/login.html';
+            return;
+        }
+
+        // 2. Load Users
+        try {
+            const res   = await fetch('/users', { credentials: 'include' });
+            const users = await res.json();
+
+            document.getElementById('usersCount').textContent = users.length;
+            document.getElementById('users-count-badge').textContent = `${users.length} total`;
+
+            const tbody = document.getElementById('usersTableBody');
+            if (!users.length) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="3">No users found</td></tr>';
+            } else {
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td><span style="color:#4a5568;">#${u.id}</span></td>
+                        <td><strong>${u.name}</strong></td>
+                        <td style="color:#8892a4;">${u.email}</td>
+                    </tr>`).join('');
+            }
+        } catch (e) {
+            document.getElementById('usersCount').textContent = '—';
+            document.getElementById('usersTableBody').innerHTML =
+                '<tr class="empty-row"><td colspan="3">Failed to load users</td></tr>';
+        }
+
+        // 3. Load Books
+        try {
+            const res   = await fetch('/books', { credentials: 'include' });
+            const books = await res.json();
+
+            document.getElementById('booksCount').textContent = books.length;
+            document.getElementById('books-count-badge').textContent = `${books.length} total`;
+
+            const tbody = document.getElementById('booksTableBody');
+            if (!books.length) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="4">No books found</td></tr>';
+            } else {
+                tbody.innerHTML = books.map(b => `
+                    <tr>
+                        <td><span style="color:#4a5568;">#${b.id}</span></td>
+                        <td><strong>${b.title}</strong></td>
+                        <td style="color:#8892a4;">${b.author}</td>
+                        <td>${b.owner ? b.owner.name + ' <span style="color:#4a5568">(#' + b.owner.id + ')</span>' : '—'}</td>
+                    </tr>`).join('');
+            }
+        } catch (e) {
+            document.getElementById('booksCount').textContent = '—';
+            document.getElementById('booksTableBody').innerHTML =
+                '<tr class="empty-row"><td colspan="4">Failed to load books</td></tr>';
+        }
+
+        // 4. Load Sharing Records
+        try {
+            const res    = await fetch('/share', { credentials: 'include' });
+            const shares = await res.json();
+
+            document.getElementById('sharesCount').textContent = shares.length;
+            document.getElementById('shares-count-badge').textContent = `${shares.length} total`;
+
+            // Count active borrows
+            const active = shares.filter(s => s.status === 'SHARED').length;
+            document.getElementById('activeCount').textContent = active;
+
+            const tbody = document.getElementById('sharesTableBody');
+            if (!shares.length) {
+                tbody.innerHTML = '<tr class="empty-row"><td colspan="7">No sharing records found</td></tr>';
+            } else {
+                tbody.innerHTML = shares.map(s => `
+                    <tr>
+                        <td><span style="color:#4a5568;">#${s.id}</span></td>
+                        <td><strong>${s.book.title}</strong></td>
+                        <td>${s.fromUser.name}</td>
+                        <td>${s.toUser.name}</td>
+                        <td style="color:#8892a4;">${s.shareDate}</td>
+                        <td style="color:#8892a4;">${s.returnDate || '—'}</td>
+                        <td>${statusBadge(s.status)}</td>
+                    </tr>`).join('');
+            }
+        } catch (e) {
+            document.getElementById('sharesCount').textContent = '—';
+            document.getElementById('activeCount').textContent = '—';
+            document.getElementById('sharesTableBody').innerHTML =
+                '<tr class="empty-row"><td colspan="7">Failed to load records</td></tr>';
+        }
+    }
+
+    // Load on page open
+    loadDashboard();
+</script>
+
+</body>
+</html>
