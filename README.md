@@ -6,7 +6,7 @@ A full-stack web application built with Spring Boot, MySQL and Vanilla JavaScrip
 👉 https://book-sharing-app-production.up.railway.app
 
 ## 🛠️ Tech Stack
-- Java 17
+- Java 25
 - Spring Boot 3.2.3
 - Spring Security (Session-based Auth)
 - Spring Data JPA + Hibernate
