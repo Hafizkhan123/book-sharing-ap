@@ -2,7 +2,6 @@
 
 <configuration>
 
-    <!-- Console logging -->
     <appender name="CONSOLE"
               class="ch.qos.logback.core.ConsoleAppender">
 
@@ -14,7 +13,6 @@
 
     </appender>
 
-    <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
