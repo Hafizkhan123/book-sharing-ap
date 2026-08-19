@@ -2,6 +2,7 @@ package com.example.booksharing.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -25,29 +26,46 @@ public class S3Service {
 
         String originalFileName = file.getOriginalFilename();
 
+        if (originalFileName == null || originalFileName.isBlank()) {
+            originalFileName = "book-cover";
+        }
+
         String fileName = UUID.randomUUID() + "-" + originalFileName;
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+        PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME)
                 .key(fileName)
                 .contentType(file.getContentType())
                 .build();
 
         s3Client.putObject(
-                putObjectRequest,
+                request,
                 RequestBody.fromBytes(file.getBytes())
         );
 
         return fileName;
     }
 
+    public String getFileUrl1(String fileName) {
+    return "https://" + BUCKET_NAME + ".s3.amazonaws.com/" + fileName;
+}
+
     public void deleteFile(String fileName) {
 
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+        DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .bucket(BUCKET_NAME)
                 .key(fileName)
                 .build();
 
-        s3Client.deleteObject(deleteObjectRequest);
+        s3Client.deleteObject(request);
     }
+
+    public String getFileUrl(String fileName) {
+
+    return s3Client.utilities()
+            .getUrl(builder -> builder
+                    .bucket(BUCKET_NAME)
+                    .key(fileName))
+            .toExternalForm();
+}
 }

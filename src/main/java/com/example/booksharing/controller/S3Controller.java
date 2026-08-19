@@ -1,9 +1,11 @@
 package com.example.booksharing.controller;
 
 import com.example.booksharing.service.S3Service;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 
 @RestController
 @RequestMapping("/api/s3")
@@ -20,6 +22,7 @@ public class S3Controller {
             @RequestParam("file") MultipartFile file) {
 
         try {
+
             String fileName = s3Service.uploadFile(file);
 
             return ResponseEntity.ok(
@@ -27,16 +30,35 @@ public class S3Controller {
             );
 
         } catch (Exception e) {
+
             return ResponseEntity.internalServerError()
                     .body("Upload failed: " + e.getMessage());
         }
     }
+
+    @GetMapping("/url/{fileName}")
+public ResponseEntity<String> getFileUrl(
+        @PathVariable String fileName) {
+
+    try {
+
+        String url = s3Service.getFileUrl(fileName);
+
+        return ResponseEntity.ok(url);
+
+    } catch (Exception e) {
+
+        return ResponseEntity.internalServerError()
+                .body("Could not generate URL: " + e.getMessage());
+    }
+}
 
     @DeleteMapping("/{fileName}")
     public ResponseEntity<String> deleteFile(
             @PathVariable String fileName) {
 
         try {
+
             s3Service.deleteFile(fileName);
 
             return ResponseEntity.ok(
@@ -44,6 +66,7 @@ public class S3Controller {
             );
 
         } catch (Exception e) {
+
             return ResponseEntity.internalServerError()
                     .body("Delete failed: " + e.getMessage());
         }
